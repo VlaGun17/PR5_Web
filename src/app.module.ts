@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common';
 import { createObserveModule } from '@nestjs/observe';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MedicinesController } from './medicines/medicines.controller';
-import { MedicinesService } from './medicines/medicines.service';
+import { MedicinesModule } from './medicines/medicines.module';
+import { SharedModule } from './shared/shared.module';
+import { OrdersModule } from './orders/orders.module';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -16,8 +17,11 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       appSecret: 'YOUR_APP_SECRET',
       serviceId: 'online-store',
     }),
+    MedicinesModule,
+    SharedModule,
+    OrdersModule,
   ],
-  controllers: [AppController, MedicinesController],
-  providers: [AppService, MedicinesService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

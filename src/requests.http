@@ -1,63 +1,38 @@
-@baseUrl = http://localhost:3000/medicines
+### 1. Отримати список усіх ліків (включаючи додані через OnModuleInit)
+GET http://localhost:3000/medicines
 
-### 1. Отримання всього списку медикаментів (GET)
-### Очікується: 200 OK та масив медикаментів
-GET {{baseUrl}}
-X-API-Version: 1.0
-X-Service-Status: operational
+### 2. Отримати ліки за ID
+GET http://localhost:3000/medicines/1
 
-###
-
-### 2. Пошук та обмеження кількості (Query Params)
-### Очікується: 200 OK з відфільтрованим списком
-GET {{baseUrl}}?search=Medicine&limit=2
-
-###
-
-### 3. Отримання медикаменту за існуючим ID
-### Очікується: 200 OK та один об'єкт
-GET {{baseUrl}}/1
-
-###
-
-### 4. Отримання медикаменту за неіснуючим ID (Перевірка 404)
-### Очікується: 404 Not Found
-GET {{baseUrl}}/non-existent-id
-
-###
-
-### 5. Створення нового медикаменту (POST)
-### Очікується: 201 Created та створений об'єкт із згенерованим ID
-POST {{baseUrl}}
+### 3. Створити новий медикамент (перевірка автогенерації slug)
+POST http://localhost:3000/medicines
 Content-Type: application/json
 
 {
-  "title": "Аспірин",
-  "price": 45.5,
+  "title": "Paracetamol Extra 500",
+  "price": 85,
   "dosageMg": 500,
   "isPrescriptionRequired": false,
-  "expirationDate": "2026-12-31T00:00:00.000Z"
+  "expirationDate": "2026-12-31"
 }
 
-###
-
-### 6. Часткове оновлення медикаменту (PATCH / PUT)
-### Очікується: 200 OK та оновлений об'єкт
-PATCH {{baseUrl}}/1
+### 4. Створити успішне замовлення (перевірка розрахунку вартості та ПДВ)
+POST http://localhost:3000/orders
 Content-Type: application/json
 
 {
-  "price": 55.0,
-  "dosageMg": 600
+  "productId": "1",
+  "quantity": 2
 }
 
-###
+### 5. Створити замовлення з неіснуючим productId (перевірка 404 Not Found)
+POST http://localhost:3000/orders
+Content-Type: application/json
 
-### 7. Видалення медикаменту за ID (DELETE)
-### Очікується: 204 No Content (порожнє тіло відповіді)
-DELETE {{baseUrl}}/1
+{
+  "productId": "non-existing-id",
+  "quantity": 1
+}
 
-##№
-### 8. Перевірка видалення (спроба знову знайти видалений елемент)
-### Очікується: 404 Not Found
-GET {{baseUrl}}/1
+### 6. Отримати список усіх замовлень
+GET http://localhost:3000/orders
